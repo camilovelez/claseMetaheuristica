@@ -7,7 +7,8 @@ Created on Mon Mar  9 10:45:14 2020
 
 class Client:
     
-    def __init__(self, latitude, longitude, demand):
+    def __init__(self, id, latitude, longitude, demand):
+        self.id = id
         self.latitude = latitude
         self.longitude = longitude
         self.demand = demand

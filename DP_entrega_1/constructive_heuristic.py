@@ -4,18 +4,22 @@ Created on Mon Mar  9 10:55:44 2020
 
 @author: cvelezg10
 """
-
+import sys
+sys.path.append("..")
 from client import Client
 from district import District
 from random import seed
 from random import randint
 
+# from utilities import distance_to_centers
+import pathlib
+import os
 
-def greedy_selection(clients, center, g, b):
+def greedy_selection(clients, center, distance_matrix, g, b):
     best_val = 99999999999
     best_index = -1
     for cl in clients:
-        distance = ((cl.longitude - center.longitude) ** 2 + (cl.latitude - center.latitude) ** 2) ** 0.5
+        distance = distance_matrix[cl.id - 1][center.id - 1]
         value = distance * g + cl.demand * b
         if value < best_val:
             best_val = value
@@ -23,15 +27,14 @@ def greedy_selection(clients, center, g, b):
     return best_index, best_val
 
 
-def constructive_heuristic(clients, K, g, b):
+def assign_districts(clients, K, distance_matrix, g, b, selected_seed):
     districts = list()
-    seed(0)
+    seed(selected_seed)
     
     for i in range(K):
         cl = clients[randint(0, K - 1)]
-        districts[i].center = cl
-        districts[i].clients.append(cl)
-        districts[i].value += cl.demand * b
+        district = District(i, cl, cl.demand * b)
+        districts.append(district)
         clients.remove(cl)
         
     clients.sort(key=lambda cl: cl.demand)
@@ -46,7 +49,7 @@ def constructive_heuristic(clients, K, g, b):
             i = K - 1
             step = -1
             
-        greedy_index, value = greedy_selection(clients, districts[i].center, g, b)
+        greedy_index, value = greedy_selection(clients, districts[i].center, distance_matrix, g, b)
         districts[i].clients.append(clients[greedy_index])
         districts[i].value += value
         del clients[greedy_index]
