@@ -157,8 +157,7 @@ class MapVisualiser:
                 longitude_list.append(client.longitude)
             gmap3.scatter(latitude_list, longitude_list, colors[color_id], size=90, marker=False)
             count_colors += 1
-
-        gmap3.draw(os.path.dirname(os.getcwd()) + "/maps/map.html")
+        gmap3.draw(os.path.dirname(os.getcwd()) + "/heuristicos/maps/map.html")
 
 # Pallet of colours
 colors =["#6495ED",
