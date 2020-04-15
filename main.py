@@ -1,67 +1,51 @@
 import pathlib
 import os
-from constructive.constructive_heuristic import assign_districts
 
+from constructive.constructive_heuristic import assign_districts
 from utilities import read_instance, distance_matrix, MapVisualiser
 from solution import Solution
-from taboo_list import Taboo_List
-from taboo_element import Taboo_Element
-
+from taboo_search.search_manager import run_search
+from client import Client
 
 if __name__ == "__main__":
     relative_path = pathlib.Path(__file__).parent.absolute()
-    clients = read_instance(os.path.join(relative_path, 'instances', 'instance_small.txt'))
+    clients = read_instance(os.path.join(relative_path, 'instances', 'instance_large.txt'))
     distance_matrix = distance_matrix(clients)
-#    clienta = Client(2, 2, 2, 2)
-#    clientb = Client(3, 2, 2, 2)
-#    clientc = Client(4, 2, 2, 2)
-#    clientd = Client(5, 2, 2, 2)
-#    districta = District(1, clientc, 3)
-#    districta.clients.append(clienta)
-#    districta.clients.append(clientb)
-#    districta.clients.append(clientd)
-#    districtb = copy.deepcopy(districta)
-#    aa = districtb.clients.pop(-1)
-#    for client in districta.clients:
-#        print(client.id, " gggg")
-#    for client in districtb.clients:
-#        print(client.id, " ffff")
-#        
-#    print(aa.id)
-#    
-##    K = int(len(clients) /10)
-#    taboo_list = Taboo_List(5)
-#    taboo_list.list.append(Taboo_Element(3,5))
-#    taboo_list.list.append(Taboo_Element(4,5))
-#    taboo_list.list.append(Taboo_Element(6,5))
-#    taboo_list.list.append(Taboo_Element(7,5))
-#    for elem in taboo_list.list:
-#        if elem.element_id == 4:
-#            taboo_list.list.remove(elem)
-#             
-#    
-#    for elem in taboo_list.list:
-#        print(elem.element_id)
-# #    taboo_list.list = [elem for elem in taboo_list.list if elem.element_id > 4]
-#     for elem in taboo_list.list:
-#         print(elem.taboo_iterations)
     
-#     s = dict()
-#     s[0] = 100
-#     s[2] = 4500
-#     s[3] = 10
-#     s[1] = 800
+    aa = Client(1,2,2,10)
+    b = Client(2,20,32,10)
+    c = Client(3,200,562,10)
+    d = Client(4,27,62,10)
+    e = Client(5,26,24,10)
     
-#     s = sorted(s.items(), key=lambda x:x[1])
+    client_list = list()
+    client_list.append(aa)
+    client_list.append(b)
+    client_list.append(c)
+    client_list.append(d)
+    client_list.append(e)
+
+    ordered_list = dict()
+    clients_length = len(client_list)
+    for client in client_list:
+        distance_to_other_clients = 0
+        for cl in client_list:
+            distance_to_other_clients += distance_matrix[client.id - 1][cl.id - 1]
+        ordered_list[client.id] = client.demand + distance_to_other_clients / clients_length
+    a= sorted(ordered_list.items(), key=lambda x:x[1], reverse = True)
     
-    K = 6
+    K = 30
     g = 150
-    b = 3
+    b = 0
     rnd_seed = 0
     districts = assign_districts(clients, K, distance_matrix, g, b, rnd_seed)  
     for district in districts:
-        district.best_ever_average_distance = district.calculate_average_distance(distance_matrix)
-
+        district.best_ever_average_distance = district.value
+        
+    print(districts[-1].value - districts[0].value)
+    districts, best_OF_ever = run_search(districts,distance_matrix, 50, 10, 10)
+    districts.sort(key=lambda di: di.value)
+    print(districts[-1].value - districts[0].value)
     solution = Solution(districts)
     mp_v = MapVisualiser()
     mp_v.draw_cluster(solution)

@@ -24,10 +24,10 @@ class District:
         return distance / len(self.clients)
 
     def calculate_value(self, distance_matrix):
-        value = 0
+        val = 0
         for client in self.clients:
-            value += distance_matrix[client.id - 1][self.center.id - 1] + client.demand
-        return value / len(self.clients)
+            val += distance_matrix[client.id - 1][self.center.id - 1] + client.demand
+        self.value = val / len(self.clients)
     
     def find_client_index(self, target_id):
         index = -1

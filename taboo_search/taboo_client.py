@@ -1,7 +1,7 @@
-class Taboo_Element:
+class Taboo_Client:
 
-    def __init__(self, element_id, taboo_iterations):
-        self.element_id = element_id
+    def __init__(self, client_id, taboo_iterations):
+        self.client_id = client_id
         self.taboo_iterations = taboo_iterations
 
     def substract_iteration(self):
