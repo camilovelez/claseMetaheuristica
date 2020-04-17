@@ -15,7 +15,6 @@ class District:
         self.center = center
         self.value = value
         self.best_ever_average_distance = 99999999
-        self.best_ever_value = 99999999
 
     def calculate_average_distance(self, distance_matrix):
         distance = 0
